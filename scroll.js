@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
       autocompleteBlock.style.display = "none";
       viewport.innerHTML = "";
       searchInput.value = selectedSubreddit;
-      sortBy = "new";
       lastId = "start";
       makeRequest();
     } 
@@ -49,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
     elem.addEventListener('click', (e) => {
       e.preventDefault();
       sortBy = e.target.innerHTML;
+      resetSortStatus(e.target)
 
       // reset
       viewport.innerHTML = "";
@@ -56,6 +56,11 @@ document.addEventListener('DOMContentLoaded', function() {
       makeRequest();
     });
   })
+
+  const resetSortStatus = (e) => {
+    [...sortButtons].forEach(elem => elem.classList.remove('active'));
+    e.classList.add("active");
+  }
 
   const setWaitingForData = (state) => {
     waitingForData = state;
