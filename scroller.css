@@ -1,0 +1,71 @@
+.nav-panel {
+  position: fixed;
+  height: 25px;
+  width: 100%;
+  background-color: white;
+  z-index: 2;
+  box-shadow: 0 4px 2px -2px gray;
+}
+.autocomplete {
+  position:fixed;
+  border: 1px black dotted;
+  width: 350px;
+  background-color: white;
+  z-index: 3;
+}
+
+.autocomplete__item {
+  border-bottom: 1px solid gray;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.autocomplete__img {
+  width: 32px;
+  border-radius: 50%;
+}
+
+.autocomplete__item:hover {
+  background: grey;
+}
+
+.load-more {
+  position: relative;
+  top: 25px;
+}
+
+.loading-marker {
+  font-size: 36px;
+  /* float: right; */
+  right: 25px;
+  top: 100px;
+  position: fixed;
+}
+
+
+.viewport {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  top: 25px;
+}
+.viewport__post {
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  margin: 0px;
+  padding: 5px;
+  border: 1px black solid;
+  margin-top: 5px;
+}
+.viewport__post a {
+  display: block;
+}
+
+.viewport__post iframe {
+  max-width: 100%;
+}
+
+img {
+  max-width: 100%;
+}
