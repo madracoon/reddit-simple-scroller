@@ -1,3 +1,7 @@
+body {
+  background-color: #dae0e6;
+}
+
 .nav-panel {
   position: fixed;
   height: 25px;
@@ -47,14 +51,13 @@
   background-color: rgb(248, 247, 242, 0.6);
 }
 
-
 .viewport {
   display: flex;
   flex-direction: column;
   position: relative;
   top: 25px;
-  background-color: #dae0e6;
 }
+
 .viewport__post {
   display: flex;
   flex-direction: column;
@@ -84,7 +87,7 @@
 }
 
 .viewport__post__preview {
-  position: relative
+  position: relative;
 }
 
 .viewport__post__overlay > div {
@@ -107,4 +110,5 @@
 
 img {
   max-width: 100%;
+  display: block;
 }

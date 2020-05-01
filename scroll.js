@@ -1,6 +1,7 @@
 'use strict';
 
 let waitingForData = false;
+let autoplayGfycat = false;
 let sortBy = "new"
 let lastId = null;
 
@@ -18,10 +19,17 @@ document.addEventListener('DOMContentLoaded', function() {
   viewport = document.getElementsByClassName("viewport")[0];
   autocompleteBlock = document.getElementsByClassName("autocomplete")[0];
   let sortButtons  = document.getElementsByClassName("sort");
+  let autoplayToggler = document.getElementsByClassName("nav__autoplay")[0];
   loadMore = document.getElementById("loadMore");
   isLoadingDiv = document.getElementsByClassName("loading-marker")[0];
 
   isLoadingDiv.style.display = "none";
+  
+  autoplayToggler.addEventListener('click', e => {
+    e.preventDefault();
+    autoplayGfycat = autoplayGfycat ? false : true;
+    autoplayToggler.innerHTML = autoplayGfycat ? "Disable autoplay" : "Enable autoplay"
+  });
 
   autocompleteBlock.addEventListener('click', e => {
     if (e.target && e.target.className == "autocomplete__item") {
@@ -161,9 +169,6 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
   post.title = postData.title;
   post.perma = postData.permalink;
   post.media = postData.media;
-  // post.preview = postData.preview;
-  console.log(post.preview)
-  // post.preview = postData.preview.images[0].source.url
   post.parent = postData.crosspost_parent_list && postData.crosspost_parent_list[0]
 
   post.childTitle = postTitle && postUrl ? "<a href='https://reddit.com" + postUrl + "' target='blank'>" + postTitle + "</a> < " : ""
@@ -180,14 +185,18 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
 
   } else if(isGfycat(post.imgSrc) && post.media) {
     hasResult = true;
-    let preview = post.media.oembed.thumbnail_url
-    let another_preview = postData.preview.images[0].source.url
-    console.log(preview)
+    let preview = postData.preview ? postData.preview.images[0].source.url : post.media.oembed.thumbnail_url
     let imagePost = document.createElement("div");
 
     imagePost.className = "viewport__post";
-    imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a>" +
-     "<div class='viewport__post__preview' data-content=" + encodeURI(post.media.oembed.html) + "><div class='viewport__post__overlay'><div>PLAY</div></div>" + "<img src=" + another_preview + "></div>"
+    
+    if (autoplayGfycat) {
+      imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a>" + htmlDecode(post.media.oembed.html);
+    } else {
+      imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a>" +
+      "<div class='viewport__post__preview' data-content=" + encodeURI(post.media.oembed.html) + "><div class='viewport__post__overlay'><div>PLAY</div></div>" + "<img src=" + preview + "></div>"
+    }
+
     viewport.append(imagePost)
 
   } else if(isEmbed(post.imgSrc) && post.media) {
@@ -213,7 +222,6 @@ const callAPI = async (subreddit, after) => {
   let sort = sortBy
   let theUrl = 'https://www.reddit.com'+ subreddit + sort +'/.json?limit=10&t=all'
   if (after != 'start') {
-    // theUrl += "&after=t3_" + after;
     theUrl += "&after=" + after;
   }
 
