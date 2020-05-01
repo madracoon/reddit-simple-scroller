@@ -37,6 +37,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   viewport.addEventListener('click', e => {
     autocompleteBlock.style.display = "none";
+
+    // replace preview with actual content
+    if (e.target && e.target.parentElement.className == "viewport__post__overlay") {
+      let preview = e.target.parentElement.parentElement
+      preview.replaceWith(stringToHTML(decodeURI(preview.dataset.content)));
+    }
   });
 
   loadMore.addEventListener('click', e => {
@@ -78,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   searchInput.onfocus = () => {
     autocompleteBlock.style.display = "block";
+    searchInput.value = "";
     autoComplete(searchInput.value);
   }
 
@@ -102,18 +109,33 @@ const isImg = function isImg(item) {
 }
 
 const isEmbed = (item) => {
-  if (item.match(/gfycat/) || item.match(/youtube\.com\//) || item.match(/twitter\.com\//)) {
+  if (item.match(/youtube\.com\//) || item.match(/twitter\.com\//)) {
+    return true;
+  }
+  return false;
+}
+
+const isGfycat = (item) => {
+  if (item.match(/gfycat/)) {
     return true;
   }
   return false;
 }
 
 //iframe text to real iframe
+// if text with &gt;&lt
 const htmlDecode = (input) => {
   var e = document.createElement('div');
   e.innerHTML = input;
   return e.childNodes[0].nodeValue;
 }
+
+// if text without &gt;&lt
+const stringToHTML = function (str) {
+	let parser = new DOMParser();
+	let doc = parser.parseFromString(str, 'text/html');
+	return doc.body;
+};
 
 const applyPosts = (data, viewport) => {
   let posts = data.data.children;
@@ -139,19 +161,35 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
   post.title = postData.title;
   post.perma = postData.permalink;
   post.media = postData.media;
+  // post.preview = postData.preview;
+  console.log(post.preview)
+  // post.preview = postData.preview.images[0].source.url
   post.parent = postData.crosspost_parent_list && postData.crosspost_parent_list[0]
 
   post.childTitle = postTitle && postUrl ? "<a href='https://reddit.com" + postUrl + "' target='blank'>" + postTitle + "</a> < " : ""
 
   if (post.parent) {
     renderPost(post.parent, post.title, post.perma)
+
   } else if(isImg(post.imgSrc)) {
     hasResult = true;
     let imagePost = document.createElement("div");
     imagePost.className = "viewport__post";
     imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a><a href=" + post.imgSrc + " target='blank'><img src=" + post.imgSrc + ">"
     viewport.append(imagePost)
-    
+
+  } else if(isGfycat(post.imgSrc) && post.media) {
+    hasResult = true;
+    let preview = post.media.oembed.thumbnail_url
+    let another_preview = postData.preview.images[0].source.url
+    console.log(preview)
+    let imagePost = document.createElement("div");
+
+    imagePost.className = "viewport__post";
+    imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a>" +
+     "<div class='viewport__post__preview' data-content=" + encodeURI(post.media.oembed.html) + "><div class='viewport__post__overlay'><div>PLAY</div></div>" + "<img src=" + another_preview + "></div>"
+    viewport.append(imagePost)
+
   } else if(isEmbed(post.imgSrc) && post.media) {
     hasResult = true;
 
