@@ -20,11 +20,15 @@ document.addEventListener('DOMContentLoaded', function() {
   autocompleteBlock = document.getElementsByClassName("autocomplete")[0];
   let sortButtons  = document.getElementsByClassName("sort");
   let autoplayToggler = document.getElementsByClassName("nav__autoplay")[0];
+  let navbar = document.getElementsByClassName("nav-panel")[0];
   loadMore = document.getElementById("loadMore");
   isLoadingDiv = document.getElementsByClassName("loading-marker")[0];
+  // For hide-menu
+  let prevScrollpos = window.pageYOffset;
+  let currentScrollPos;
 
   isLoadingDiv.style.display = "none";
-  
+
   autoplayToggler.addEventListener('click', e => {
     e.preventDefault();
     autoplayGfycat = autoplayGfycat ? false : true;
@@ -38,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
       autocompleteBlock.style.display = "none";
       viewport.innerHTML = "";
       searchInput.value = selectedSubreddit;
+      navbar.style.backgroundImage = 'url("' + e.target.dataset.banner + '")';
       lastId = "start";
       makeRequest();
     } 
@@ -101,6 +106,16 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   window.onscroll = function(ev) {
+    // hide menu
+    currentScrollPos = window.pageYOffset;
+    if (prevScrollpos > currentScrollPos) {
+      navbar.style.top = "0px";
+    } else {
+      navbar.style.top = "-62px";
+    }
+    prevScrollpos = currentScrollPos;
+
+    // load content
     if (!waitingForData) return false;
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && waitingForData) {
       setWaitingForData(false)
@@ -263,7 +278,7 @@ const autoComplete = (q) => {
     data.data.children.forEach(item => {
       let icon = item.data.icon_img || item.data.community_icon
       icon = icon ? "<img src=" + icon + " class='autocomplete__img' >" : ""
-      autocompleteResult.push("<div class='autocomplete__item' data-subr=" + item.data.url + ">" + icon + item.data.url + "</div>")
+      autocompleteResult.push("<div class='autocomplete__item' data-subr=" + item.data.url + " data-banner=" + item.data.banner_background_image + ">" + icon + item.data.url + "</div>")
     })
     autocompleteBlock.innerHTML = autocompleteResult.join(" ");
   }).catch(data => console.log(data));

@@ -3,16 +3,35 @@ body {
 }
 
 .nav-panel {
+  top: 0px;
   position: fixed;
-  height: 25px;
+  height: 50px;
   width: 100%;
   background-color: white;
   z-index: 3;
-  box-shadow: 0 4px 2px -2px gray;
+  box-shadow: 0 0 6px -2px gray;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 5px;
+  transition: 0.3s;
+}
+
+.nav-panel input[type="text"] {
+  border-radius: 2px;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+}
+
+.nav-panel .nav-control {
+  background-color: rgb(248, 247, 242, 0.6);
+  width: fit-content;
+  padding: 2px;
 }
 
 .nav-panel .active{
-  color: orange;
+  color: rebeccapurple;
+  opacity: 0.4;
 }
 .autocomplete {
   position:fixed;
@@ -55,7 +74,8 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-  top: 25px;
+  top: 62px;
+  align-items: center;
 }
 
 .viewport__post {
@@ -106,9 +126,11 @@ body {
 
 .viewport__post iframe {
   max-width: 100%;
+  max-height: 86vh;
 }
 
-img {
+.viewport__post img {
   max-width: 100%;
   display: block;
+  max-height: 86vh;
 }
