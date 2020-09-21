@@ -139,7 +139,7 @@ const isEmbed = (item) => {
 }
 
 const isGfycat = (item) => {
-  if (item.match(/gfycat/)) {
+  if (item.match(/gfycat|redgifs/)) {
     return true;
   }
   return false;
