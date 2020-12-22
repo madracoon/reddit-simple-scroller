@@ -144,4 +144,5 @@ body {
   overflow: hidden;
   padding-top: 56.25%;
   width: 500px;
+  max-width: 96vw;
 }
