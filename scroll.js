@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // replace preview with actual content
     if (e.target && e.target.parentElement.className == "viewport__post__overlay") {
       let preview = e.target.parentElement.parentElement
-      preview.replaceWith(stringToHTML(decodeURI(preview.dataset.content)));
+      preview.replaceWith(stringToHTML("<div class='iframe-container'>" + decodeURI(preview.dataset.content) + "</div>"));
     }
   });
 
@@ -148,7 +148,7 @@ const isGfycat = (item) => {
 //iframe text to real iframe
 // if text with &gt;&lt
 const htmlDecode = (input) => {
-  var e = document.createElement('div');
+  let e = document.createElement('div');
   e.innerHTML = input;
   return e.childNodes[0].nodeValue;
 }
@@ -206,7 +206,7 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
     imagePost.className = "viewport__post";
     
     if (autoplayGfycat) {
-      imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a>" + htmlDecode(post.media.oembed.html);
+      imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a><div class='iframe-container'>" + htmlDecode(post.media.oembed.html) + "</div>"
     } else {
       imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a>" +
       "<div class='viewport__post__preview' data-content=" + encodeURI(post.media.oembed.html) + "><div class='viewport__post__overlay'><div>PLAY</div></div>" + "<img src=" + preview + "></div>"
@@ -219,7 +219,7 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
 
     let imagePost = document.createElement("div");
     imagePost.className = "viewport__post";
-    imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a>" + htmlDecode(post.media.oembed.html);
+    imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a><div class='iframe-container'>" + htmlDecode(post.media.oembed.html) + "</div>";
     viewport.append(imagePost)
   }
 
