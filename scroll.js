@@ -242,6 +242,7 @@ const callAPI = async (subreddit, after) => {
 
   let response = await fetch(theUrl, {
     method:'GET',
+    cache: 'no-cache',
     // headers:{
     //     'Accept':'application/json',
     //     'Content-Type':'application/json',
@@ -259,6 +260,7 @@ const subbreditSearch = async (q, signal) => {
   
   let response = await fetch(url, {
     method: 'GET',
+    cache: 'no-cache',
     signal: signal,
   })
   let data = await response.json();
