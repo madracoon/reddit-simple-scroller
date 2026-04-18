@@ -186,7 +186,7 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
   post.media = postData.media;
   post.parent = postData.crosspost_parent_list && postData.crosspost_parent_list[0]
 
-  post.childTitle = postTitle && postUrl ? "<a href='https://reddit.com" + postUrl + "' target='blank'>" + postTitle + "</a> < " : ""
+  post.childTitle = postTitle && postUrl ? "<a href='https://reddit.com" + postUrl + "' target='blank' class=" + 'post-title' + ">" + postTitle + "</a> < " : ""
 
   if (post.parent) {
     renderPost(post.parent, post.title, post.perma)
@@ -195,7 +195,7 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
     hasResult = true;
     let imagePost = document.createElement("div");
     imagePost.className = "viewport__post";
-    imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a><a href=" + post.imgSrc + " target='blank'><img src=" + post.imgSrc + ">"
+    imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><a href=" + post.imgSrc + " target='blank'><img src=" + post.imgSrc + ">"
     viewport.append(imagePost)
 
   } else if(isGfycat(post.imgSrc) && post.media) {
@@ -206,9 +206,9 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
     imagePost.className = "viewport__post";
     
     if (autoplayGfycat) {
-      imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a><div class='iframe-container'>" + htmlDecode(post.media.oembed.html) + "</div>"
+      imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><div class='iframe-container'>" + htmlDecode(post.media.oembed.html) + "</div>"
     } else {
-      imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a>" +
+      imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a>" +
       "<div class='viewport__post__preview' data-content=" + encodeURI(post.media.oembed.html) + "><div class='viewport__post__overlay'><div>PLAY</div></div>" + "<img src=" + preview + "></div>"
     }
 
@@ -219,7 +219,7 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
 
     let imagePost = document.createElement("div");
     imagePost.className = "viewport__post";
-    imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank'>" + post.title + "</a><div class='iframe-container'>" + htmlDecode(post.media.oembed.html) + "</div>";
+    imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><div class='iframe-container'>" + htmlDecode(post.media.oembed.html) + "</div>";
     viewport.append(imagePost)
   }
 
