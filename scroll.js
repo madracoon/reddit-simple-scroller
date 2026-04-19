@@ -185,6 +185,7 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
   post.perma = postData.permalink;
   post.media = postData.media;
   post.parent = postData.crosspost_parent_list && postData.crosspost_parent_list[0]
+  post.previewImgSrc = postData.preview?.images?.at(0)?.resolutions?.at(-1)?.url;
 
   post.childTitle = postTitle && postUrl ? "<a href='https://reddit.com" + postUrl + "' target='blank' class=" + 'post-title' + ">" + postTitle + "</a> < " : ""
 
@@ -195,7 +196,8 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
     hasResult = true;
     let imagePost = document.createElement("div");
     imagePost.className = "viewport__post";
-    imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><a href=" + post.imgSrc + " target='blank'><img src=" + post.imgSrc + ">"
+    imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><a href=" + post.imgSrc + " target='blank'><img src=" + post.previewImgSrc + " loading='lazy'>"
+
     viewport.append(imagePost)
 
   } else if(isGfycat(post.imgSrc) && post.media) {
