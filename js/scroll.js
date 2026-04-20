@@ -145,6 +145,11 @@ const isGfycat = (item) => {
   return false;
 }
 
+const isGallery = (item) => {
+  console.log(item);
+  return item.isGallery;
+} 
+
 //iframe text to real iframe
 // if text with &gt;&lt
 const htmlDecode = (input) => {
@@ -187,6 +192,10 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
   post.parent = postData.crosspost_parent_list && postData.crosspost_parent_list[0]
   post.previewImgSrc = postData.preview?.images?.at(0)?.resolutions?.at(-1)?.url;
 
+  // Gallery fields
+  post.mediaMetadata = postData.media_metadata;
+  post.isGallery = postData.is_gallery;
+
   post.childTitle = postTitle && postUrl ? "<a href='https://reddit.com" + postUrl + "' target='blank' class=" + 'post-title' + ">" + postTitle + "</a> < " : ""
 
   if (post.parent) {
@@ -223,6 +232,36 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
     imagePost.className = "viewport__post";
     imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><div class='iframe-container'>" + htmlDecode(post.media.oembed.html) + "</div>";
     viewport.append(imagePost)
+    // Gallery
+  } else if(isGallery(post)) {
+    console.log('GALLET!');
+    try {
+      const mediaArray = Object.values(post.mediaMetadata).map((mediaItem) => {
+        if (mediaItem.e === 'Image') {
+          return mediaItem.p?.at(-1)?.u;
+        }
+      })
+
+      hasResult = true;
+
+      const imagGalleryPost = document.createElement("div");
+      imagGalleryPost.className = "viewport__post";
+      imagGalleryPost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a>";
+      // const imagGalleryBlock = document.createElement("div");
+      const resultDiv = makeSliderDiv(mediaArray);
+            // console.log('opopop');
+
+      console.log(resultDiv);
+
+      imagGalleryPost.appendChild(resultDiv);
+
+      viewport.append(imagGalleryPost);
+
+    } catch (e) {
+      console.log('GalleryError', e);
+    }
+
+    
   }
 
   return hasResult;
@@ -286,4 +325,14 @@ const autoComplete = (q) => {
     })
     autocompleteBlock.innerHTML = autocompleteResult.join(" ");
   }).catch(data => console.log(data));
+}
+
+const makeSliderDiv = (mediaArray) => {
+  const imagGalleryBlock = document.createElement("div");
+  imagGalleryBlock.className = "slider"
+  const slidesHTML = mediaArray.map(item => 
+    `<div class="slide"><img src="${item}" loading='lazy'></div>`
+  ).join('');
+  imagGalleryBlock.insertAdjacentHTML('beforeend', slidesHTML);
+  return imagGalleryBlock;
 }
