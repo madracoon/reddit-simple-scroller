@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // replace preview with actual content
     if (e.target && e.target.parentElement.className == "viewport__post__overlay") {
-      let preview = e.target.parentElement.parentElement
-      preview.replaceWith(stringToHTML("<div class='iframe-container'>" + decodeURI(preview.dataset.content) + "</div>"));
+      const preview = e.target.parentElement.parentElement
+      loadVideo(preview, stringToHTML(decodeURI(preview.dataset.iframe)).firstChild, preview.dataset.fallbackvideo)
     }
   });
 
@@ -131,6 +131,10 @@ const isImg = function isImg(item) {
   return false;
 }
 
+const isGif = function(item) {
+  return item.endsWith(".gif");
+}
+
 const isEmbed = (item) => {
   if (item.match(/youtube\.com\//) || item.match(/twitter\.com\//)) {
     return true;
@@ -191,6 +195,7 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
   post.media = postData.media;
   post.parent = postData.crosspost_parent_list && postData.crosspost_parent_list[0]
   post.previewImgSrc = postData.preview?.images?.at(0)?.resolutions?.at(-1)?.url;
+  post.previewVideoSrc = postData.preview?.reddit_video_preview?.fallback_url;
 
   // Gallery fields
   post.mediaMetadata = postData.media_metadata;
@@ -205,7 +210,11 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
     hasResult = true;
     let imagePost = document.createElement("div");
     imagePost.className = "viewport__post";
-    imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><a href=" + post.imgSrc + " target='blank'><img src=" + post.previewImgSrc + " loading='lazy'>"
+    if (isGif(post.imgSrc)) {
+      imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><a href=" + post.imgSrc + " target='blank'><img src=" + post.imgSrc + ">"
+    } else {
+      imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><a href=" + post.imgSrc + " target='blank'><img src=" + post.previewImgSrc + " loading='lazy'>"
+    }
 
     viewport.append(imagePost)
 
@@ -215,12 +224,12 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
     let imagePost = document.createElement("div");
 
     imagePost.className = "viewport__post";
-    
+
     if (autoplayGfycat) {
-      imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><div class='iframe-container'>" + htmlDecode(post.media.oembed.html) + "</div>"
+      imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a>" + loadVideo('',post.media.oembed.html, post.previewVideoSrc);
     } else {
       imagePost.innerHTML = post.childTitle + "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a>" +
-      "<div class='viewport__post__preview' data-content=" + encodeURI(post.media.oembed.html) + "><div class='viewport__post__overlay'><div>PLAY</div></div>" + "<img src=" + preview + "></div>"
+      "<div class='viewport__post__preview' data-iframe=" + encodeURI(post.media.oembed.html) + " data-fallbackvideo="+ post.previewVideoSrc +"><div class='viewport__post__overlay'><div>PLAY</div></div>" + "<img src=" + preview + "></div>"
     }
 
     viewport.append(imagePost)
@@ -234,7 +243,6 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
     viewport.append(imagePost)
     // Gallery
   } else if(isGallery(post)) {
-    console.log('GALLET!');
     try {
       const mediaArray = Object.values(post.mediaMetadata).map((mediaItem) => {
         if (mediaItem.e === 'Image') {
@@ -247,14 +255,9 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
       const imagGalleryPost = document.createElement("div");
       imagGalleryPost.className = "viewport__post";
       imagGalleryPost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a>";
-      // const imagGalleryBlock = document.createElement("div");
+
       const resultDiv = makeSliderDiv(mediaArray);
-            // console.log('opopop');
-
-      console.log(resultDiv);
-
       imagGalleryPost.appendChild(resultDiv);
-
       viewport.append(imagGalleryPost);
 
     } catch (e) {
@@ -335,4 +338,58 @@ const makeSliderDiv = (mediaArray) => {
   ).join('');
   imagGalleryBlock.insertAdjacentHTML('beforeend', slidesHTML);
   return imagGalleryBlock;
+}
+
+const loadVideo = (container, iframeElement, fallbackUrl) => {
+  container.childNodes[0].childNodes[0].innerHTML = '';
+
+  const iframeContainer = document.createElement("div");
+  iframeContainer.className = "iframe-container";
+  iframeContainer.appendChild(iframeElement);
+  hideVisibility(iframeContainer, true);
+  // container.replaceWith(iframeContainer);
+  container.appendChild(iframeContainer);
+  
+  const timeout = setTimeout(() => {
+    const video = document.createElement('video');
+    video.controls = true;
+    video.autoplay = true;
+    video.preload = 'metadata';
+    video.loading = 'lazy';
+    video.style.width = '100%';
+    video.innerHTML = `<source src="${fallbackUrl}" type='video/mp4'>`;
+    container.replaceWith(video);
+  }, 3000);
+  
+  iframeElement.onload = () => {
+    clearTimeout(timeout);
+    container.replaceWith(iframeContainer);
+    hideVisibility(iframeContainer, false);
+
+};
+  iframeElement.onerror = () => {
+    clearTimeout(timeout);
+    const video = document.createElement('video');
+    video.controls = true;
+    video.autoplay = true;
+    video.preload = 'metadata';
+    video.loading = 'lazy';
+    video.style.width = '100%';
+    video.innerHTML = `<source src="${fallbackUrl}" type='video/mp4'>`;
+    iframeContainer.replaceWith(video);
+  };
+};
+
+const hideVisibility = (element, visibilityState) => {
+  if (visibilityState) {
+    element.style.visibility = 'hidden';
+    element.style.position = 'absolute';
+    element.style.top = '-9999px';
+    element.style.left = '-9999px';
+  } else {
+    element.style.removeProperty("visibility")
+    element.style.removeProperty("position")
+    element.style.removeProperty("top");
+    element.style.removeProperty("left");
+  }
 }

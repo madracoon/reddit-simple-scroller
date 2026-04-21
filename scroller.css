@@ -211,6 +211,13 @@ body {
   border-radius: 10px;
 }
 
+.viewport__post video {
+  max-width: 100%;
+  display: block;
+  max-height: 80vh;
+  border-radius: 10px;
+}
+
 .iframe-container {
   position: relative;
   overflow: hidden;
