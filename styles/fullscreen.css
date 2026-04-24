@@ -1,0 +1,36 @@
+.img-fullscreen {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  cursor: zoom-out;
+  animation: fadeIn 0.25s ease;
+}
+
+.img-fullscreen img {
+  max-width: 95%;
+  max-height: 95%;
+  /* border-radius: 12px; */
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+
+  animation: zoomIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+} 
