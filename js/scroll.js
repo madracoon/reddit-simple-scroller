@@ -150,7 +150,6 @@ const isGfycat = (item) => {
 }
 
 const isGallery = (item) => {
-  console.log(item);
   return item.isGallery;
 } 
 
@@ -211,9 +210,9 @@ const renderPost = (postData, postTitle = "", postUrl = "") => {
     let imagePost = document.createElement("div");
     imagePost.className = "viewport__post";
     if (isGif(post.imgSrc)) {
-      imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><a href=" + post.imgSrc + " target='blank'><img src=" + post.imgSrc + ">"
+      imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><img src=" + post.imgSrc + ">"
     } else {
-      imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><a href=" + post.imgSrc + " target='blank'><img src=" + post.previewImgSrc + " loading='lazy'>"
+      imagePost.innerHTML = "<a href='https://reddit.com" + post.perma + "' target='blank' class=" + 'post-title' + ">" + post.title + "</a><img src=" + post.previewImgSrc + " loading='lazy'>"
     }
 
     viewport.append(imagePost)
@@ -366,7 +365,8 @@ const loadVideo = (container, iframeElement, fallbackUrl) => {
     container.replaceWith(iframeContainer);
     hideVisibility(iframeContainer, false);
 
-};
+  };
+
   iframeElement.onerror = () => {
     clearTimeout(timeout);
     const video = document.createElement('video');
