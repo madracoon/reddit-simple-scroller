@@ -163,7 +163,9 @@ body {
 .viewport__post img {
   max-width: 100%;
   display: block;
-  max-height: 80vh;
+  /* max-height: 80vh; */
+  max-height: var(--content-height);
+
   border-radius: 10px;
   cursor: zoom-in;
 }
@@ -171,7 +173,9 @@ body {
 .viewport__post video {
   max-width: 100%;
   display: block;
-  max-height: 80vh;
+  /* max-height: 80vh; */
+  max-height: var(--content-height);
+
   border-radius: 10px;
 }
 

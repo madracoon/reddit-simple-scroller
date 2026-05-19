@@ -21,7 +21,8 @@
 .slide img {
   width: 100%;
   height: auto;
-  max-height: 80vh;
+  /* max-height: 80vh; */
+  max-height: var(--content-height);
   object-fit: contain;
   object-position: center;
   cursor: zoom-in;

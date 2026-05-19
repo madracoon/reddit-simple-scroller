@@ -26,3 +26,15 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleBtn.textContent = theme === "dark" ? "☀️" : "🌙";
   }
 }); 
+
+document.addEventListener('DOMContentLoaded', function() {
+  const fitContent = document.getElementById("fit-content");
+
+  fitContent.addEventListener('change', () => {
+    if (fitContent.checked) {
+      document.documentElement.style.setProperty('--content-height', '80vh');
+    } else {
+      document.documentElement.style.setProperty('--content-height', '100%');
+    }
+  })
+});
