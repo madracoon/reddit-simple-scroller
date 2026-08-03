@@ -1,3 +1,5 @@
+# Reddit has disabled its JSON API for public access, so the project no longer works.
+
 # 📜 Reddit Simple Scroller
 
 A lightweight web client for browsing Reddit as an infinite scroll feed.
